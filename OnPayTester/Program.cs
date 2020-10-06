@@ -79,8 +79,8 @@ namespace OnPayTester
                     SetupClient();
                     ListenForAction();
                     break;
-                case "oath2":
-                    await Oath2();
+                case "oauth2":
+                    await Oauth2();
                     break;
                 default:
                     Console.WriteLine("Unknown action");
@@ -207,7 +207,7 @@ namespace OnPayTester
             Console.ForegroundColor = ConsoleColor.White;
         }
 
-        private static async Task Oath2()
+        private static async Task Oauth2()
         {
             var merchant = "3019014193144498";
             var url = $"https://manage.onpay.io/{merchant}/oauth2/authorize";
