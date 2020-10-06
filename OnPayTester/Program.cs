@@ -209,20 +209,18 @@ namespace OnPayTester
 
         private static async Task Oath2()
         {
-
             var merchant = "3019014193144498";
-
             var url = $"https://manage.onpay.io/{merchant}/oauth2/authorize";
             var client = new HttpClient();
-
-            // Populate the form variable
-            var formVariables = new List<KeyValuePair<string, string>>();
-            formVariables.Add(new KeyValuePair<string, string>("scope", "full"));
-            formVariables.Add(new KeyValuePair<string, string>("response_mode", "form_post"));
-            formVariables.Add(new KeyValuePair<string, string>("_username", ""));
-            formVariables.Add(new KeyValuePair<string, string>("_password", ""));
-            formVariables.Add(new KeyValuePair<string, string>("client_id", ""));
-            formVariables.Add(new KeyValuePair<string, string>("_password", "form_post"));
+            var formVariables = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>("scope", "full"),
+                new KeyValuePair<string, string>("response_mode", "form_post"),
+                new KeyValuePair<string, string>("_username", ""),
+                new KeyValuePair<string, string>("_password", ""),
+                new KeyValuePair<string, string>("client_id", ""),
+                new KeyValuePair<string, string>("_password", "form_post")
+            };
 
             var formContent = new FormUrlEncodedContent(formVariables);
 
