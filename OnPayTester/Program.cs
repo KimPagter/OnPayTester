@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Threading.Tasks;
 using OnPayClient.Exceptions;
 using OnPayClient.Models.Enums;
 
@@ -10,9 +9,10 @@ namespace OnPayTester
     {
         private static OnPayClient.OnPayClient _onPayClient;
 
-        static async Task Main()
+        static void Main()
         {
-            WriteConsoleInfo("SUPPORTED ACTIONS");
+            WriteConsoleInfo("------------------");
+            WriteConsoleInfo("ACTIONS");
             WriteConsoleInfo("------------------");
             WriteConsoleInfo("ping");
             WriteConsoleInfo("details");
@@ -23,31 +23,48 @@ namespace OnPayTester
 
             try
             {
-                await SetupClient();
+                SetupClient();
             }
             catch (InvalidServerResponseException invalidServerResponseException)
             {
                 WriteConsoleError($"OnPay responded with status:{invalidServerResponseException.HttpStatus}");
+                ListenForAction();
             }
             catch (Exception e)
             {
                 WriteConsoleError(e.Message);
-                await SetupClient();
+                ListenForAction();
             }
 
         }
 
-        private static async Task SetupClient()
+        private static void SetupClient()
         {
-            var token = File.ReadAllText("token.txt");
+            var tokenFilePath = "token.txt";
+            var token = string.Empty;
+            if (File.Exists(tokenFilePath))
+            {
+                token = File.ReadAllText("token.txt");
+                if (!string.IsNullOrEmpty(token))
+                {
+                    WriteConsoleStatus("Using token:");
+                    WriteConsoleStatus(token);
+                }
+                else
+                {
+                    WriteConsoleError($"You need to specify a access token in file:{tokenFilePath}");
+                }
+            }
+            else
+            {
+                WriteConsoleError($"Failed to load access token from file:{tokenFilePath}");
+            }
             _onPayClient = new OnPayClient.OnPayClient(token);
-            WriteConsoleStatus("Using token:");
-            WriteConsoleStatus(token);
-            await ListenForAction();
+            ListenForAction();
         }
 
         // ReSharper disable once FunctionRecursiveOnAllPaths
-        private static async Task ListenForAction()
+        private static void ListenForAction()
         {
             GetConsoleInput("Please enter action");
             var action = Console.ReadLine();
@@ -66,13 +83,13 @@ namespace OnPayTester
                     CaptureTransaction();
                     break;
                 case "readtoken":
-                    await SetupClient();
+                    SetupClient();
                     break;
                 default:
                     Console.WriteLine("Unknown action");
                     break;
             }
-            await ListenForAction();
+            ListenForAction();
         }
 
         private static void PingClient()
