@@ -188,6 +188,7 @@ namespace OnPayTester
         {
             //Set up the window
             var window = new PaymentWindow();
+
             window.SetGatewayId("Yor gateway id")
                 .SetWindowSecret("secret")
                 .SetCurrency("DKK")
@@ -204,8 +205,16 @@ namespace OnPayTester
                 .SetName("Test Person")
                 .SetWebsite("https://example.com")
                 .SetEmail("email@example.com");
-            // Use these params for your form
-            var param = window.GenerateParams();
+            
+            var formFields = window.GenerateParams();
+
+            WriteConsoleInfo("<form action=\"https://onpay.io/window/v3/\" method=\"POST\">");
+            foreach (var formField in formFields)
+            {
+                WriteConsoleInfo($"<input type=\"hidden\" name=\"{formField.Key}\"> value=\"{formField.Value}\"");
+            }
+            WriteConsoleInfo("</form>");
+
         }
 
         private static void HandleInvalidServerResponse(InvalidServerResponseException invalidServerResponseException)
@@ -221,8 +230,6 @@ namespace OnPayTester
             Console.WriteLine(message);
             Console.ForegroundColor = ConsoleColor.Green;
         }
-
-
 
         private static void WriteConsoleInfo(string message)
         {
