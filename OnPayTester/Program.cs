@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using OnPayClient;
 using OnPayClient.Exceptions;
 using OnPayClient.Models.Enums;
 
@@ -19,6 +20,7 @@ namespace OnPayTester
             WriteConsoleInfo("list");
             WriteConsoleInfo("capture");
             WriteConsoleInfo("readtoken");
+            WriteConsoleInfo("paymentwindow");
             WriteConsoleInfo("------------------");
 
             try
@@ -84,6 +86,9 @@ namespace OnPayTester
                     break;
                 case "readtoken":
                     SetupClient();
+                    break;
+                case "paymentwindow":
+                    PaymentWindow();
                     break;
                 default:
                     Console.WriteLine("Unknown action");
@@ -179,6 +184,30 @@ namespace OnPayTester
 
         }
 
+        private static void PaymentWindow()
+        {
+            //Set up the window
+            var window = new PaymentWindow();
+            window.SetGatewayId("Yor gateway id")
+                .SetWindowSecret("secret")
+                .SetCurrency("DKK")
+                .SetAmount(123400)
+                .SetReference("UniqueReferenceId")
+                .SetAcceptUrl("https://example.com/payment?success=1")
+                .SetDeclineUrl("https://example.com/payment?success=0")
+                .SetType("payment")
+                .SetDesign("DesignName")
+                .Enable3DSecure()
+                .SetMethod("card")
+                .EnableTestMode()
+                .SetLanguage("en")
+                .SetName("Test Person")
+                .SetWebsite("https://example.com")
+                .SetEmail("email@example.com");
+            // Use these params for your form
+            var param = window.GenerateParams();
+        }
+
         private static void HandleInvalidServerResponse(InvalidServerResponseException invalidServerResponseException)
         {
             WriteConsoleError($"Operation failed with http status code {invalidServerResponseException.HttpStatus}");
@@ -192,6 +221,8 @@ namespace OnPayTester
             Console.WriteLine(message);
             Console.ForegroundColor = ConsoleColor.Green;
         }
+
+
 
         private static void WriteConsoleInfo(string message)
         {
